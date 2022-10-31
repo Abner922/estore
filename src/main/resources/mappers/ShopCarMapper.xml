@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.dao.ShopCarMapper">
+    <resultMap id="shopCarResult" type="shopCar">
+        <id property="id" column="ID"></id>
+        <result property="num" column="NUM"></result>
+        <result property="bookId" column="BOOK_ID"></result>
+        <result property="customerId" column="CUSTOMER_ID"></result>
+    </resultMap>
+
+    <select id="queryShopCarByCidAndBId" resultMap="shopCarResult">
+        select * from ES_SHOPCAR where book_Id=#{bid} and customer_Id=#{cid}
+    </select>
+
+    <update id="updateShopCar">
+        update ES_SHOPCAR set num=#{num} where book_id=#{bookId} and customer_id=#{customerId}
+    </update>
+
+    <insert id="saveShopCar">
+        insert into ES_SHOPCAR values(es_shopcar_id.nextval,#{num},#{bookId},#{customerId})
+    </insert>
+
+    <resultMap id="bookMap" type="shopCar">
+        <id property="id" column="shopCarId"></id>
+        <result property="num" column="NUM"></result>
+        <result property="bookId" column="BOOK_ID"></result>
+        <result property="customerId" column="CUSTOMER_ID"></result>
+        <association property="book" resultMap="childMap"></association>
+    </resultMap>
+    <resultMap id="childMap" type="book">
+        <id property="id" column="BOOKID"></id>
+        <result property="name" column="NAME"></result>
+        <result property="price" column="PRICE"></result>
+        <result property="author" column="AUTHOR"></result>
+        <result property="publisher" column="PUBLISHER"></result>
+        <result property="pubDate" column="PUBDATE"></result>
+        <result property="description" column="DESCRIPTION"></result>
+        <result property="image" column="IMAGE"></result>
+    </resultMap>
+    <select id="findShopCarsByCustomer" resultMap="bookMap">
+        SELECT es.id shopCarId,es.num,es.book_id,es.customer_id,eb.*
+        from ES_BOOK eb,ES_SHOPCAR es
+        where eb.bookid=es.book_id and es.customer_id=#{id}
+    </select>
+
+    <delete id="deleteShopCarByCidAndBId">
+        delete from ES_SHOPCAR
+        where customer_id=#{cid}
+        and book_id=#{bid}
+    </delete>
+
+    <delete id="deleteShopCarByCustomerId">
+        delete from ES_SHOPCAR
+        where customer_id=#{cid}
+    </delete>
+</mapper>

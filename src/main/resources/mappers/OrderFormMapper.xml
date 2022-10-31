@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.dao.OrderFormMapper">
+
+    <resultMap id="formResult" type="orderForm">
+        <id property="id" column="ORDERFORMID"></id>
+        <result property="cost" column="COST"></result>
+        <result property="orderdate" column="ORDERDATE"></result>
+        <association property="shopAddress" resultMap="addResult"></association>
+    </resultMap>
+    <resultMap id="addResult" type="shopAddress">
+        <id property="id" column="SAID"></id>
+        <result property="receiveName" column="RECEIVENAME"></result>
+    </resultMap>
+
+    <insert id="saveOrderForm">
+        <selectKey keyProperty="id" order="BEFORE" resultType="int">
+            select ES_ORDERFORM_ID.nextval from dual
+        </selectKey>
+        insert into es_orderForm values(#{id},#{cost},#{orderdate},#{shopAddress.id},#{customer.id})
+    </insert>
+    <select id="findOrderFormByCustomerId" resultMap="formResult">
+        SELECT *
+        FROM ES_ORDERFORM eo,ES_SHOPADDRESS es
+        where eo.SHOPADDRESS_ID=es.SAID and eo.CUSTOMER_ID=#{id}
+    </select>
+</mapper>

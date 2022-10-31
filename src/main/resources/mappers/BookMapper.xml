@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.dao.BookMapper">
+    <resultMap id="bookResult" type="book">
+        <id property="id" column="BOOKID"></id>
+        <result property="name" column="NAME"></result>
+        <result property="price" column="PRICE"></result>
+        <result property="author" column="AUTHOR"></result>
+        <result property="publisher" column="PUBLISHER"></result>
+        <result property="pubDate" column="PUBDATE"></result>
+        <result property="description" column="DESCRIPTION"></result>
+<!--        <result property="category" column="CATEGORY_ID"></result>-->
+        <result property="image" column="IMAGE"></result>
+        <association property="category" resultMap="childResult"></association>
+    </resultMap>
+    <resultMap id="childResult" type="category">
+        <id property="id" column="CID"></id>
+        <result property="name" column="CNAME"></result>
+        <result property="description" column="CDESC"></result>
+    </resultMap>
+    <select id="findAllBooks" resultMap="bookResult">
+        SELECT eb.* ,ec.categoryid cid,ec.name cname,ec.description cdesc
+        from ES_BOOK eb
+        inner join
+        ES_CATEGORY ec
+        on
+        eb.category_id = ec.categoryid
+    </select>
+    <select id="findBookById" resultMap="bookResult">
+        SELECT eb.* ,ec.categoryid cid,ec.name cname,ec.description cdesc
+        from ES_BOOK eb
+        inner join
+        ES_CATEGORY ec
+        on
+        eb.category_id = ec.categoryid
+        where bookId=#{id}
+    </select>
+</mapper>
